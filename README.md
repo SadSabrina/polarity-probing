@@ -26,7 +26,6 @@ The paper includes the release of new datasets containing contrasting pairs of "
 <table>
 <thead>
 <tr>
-<th>Dataset</th>
 <th>Method/Category</th>
 <th>Description</th>
 <th>Proportion</th>
@@ -34,16 +33,14 @@ The paper includes the release of new datasets containing contrasting pairs of "
 </thead>
 <tbody>
 <tr>
-<td colspan="4"><strong>"Mixed" Dataset</strong></td>
+<td colspan="3"><strong>"Mixed" Dataset</strong></td>
 </tr>
 <tr>
-<td></td>
 <td>Concurrent-based</td>
 <td>Harmful and safe statements differ by rephrasing, while preserving semantic opposition</td>
 <td>74.7%</td>
 </tr>
 <tr>
-<td></td>
 <td>Negation-based</td>
 <td>One statement is the syntactic negation of the other</td>
 <td>26.3%</td>
@@ -52,13 +49,11 @@ The paper includes the release of new datasets containing contrasting pairs of "
 <td colspan="4"><strong>"Not" Dataset</strong></td>
 </tr>
 <tr>
-<td></td>
 <td>Harmful version</td>
 <td>Contains "not" in 51% of pairs where $x^{\text{harm}} = \texttt{not}(x^{\text{safe}})$ or vice versa</td>
 <td>51%</td>
 </tr>
 <tr>
-<td></td>
 <td>Safe version</td>
 <td>Controlled negation setting with tightly aligned sentences</td>
 <td>49%</td>
