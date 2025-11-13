@@ -50,13 +50,13 @@ The paper includes the release of new datasets containing contrasting pairs of "
 </tr>
 <tr>
 <td>Harmful sentences (625)</td>
-<td>Contains "not" in 27% of statements where $\texttt{not}(x^{\text{harm}}) = x^{\text{safe}}$</td>
-<td>27%</td>
+<td>Contains "not" in 52.8% of statements where $\texttt{not}(x^{\text{harm}}) = x^{\text{safe}}$</td>
+<td>52.8%</td>
 </tr>
 <tr>
-<td>Safe sentences</td>
-<td>Contains "not" in 27% of statements where $x^{\text{harm}} = \texttt{not}(x^{\text{safe}}$)</td>
-<td>73%</td>
+<td>Safe sentences (625)</td>
+<td>Contains "not" in 47.52% of statements where $x^{\text{harm}} = \texttt{not}(x^{\text{safe}}$)</td>
+<td>47.52%</td>
 </tr>
 </tbody>
 </table>
