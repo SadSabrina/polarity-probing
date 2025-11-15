@@ -15,7 +15,7 @@ Advances in unsupervised probes like Contrast‑Consistent Search (CCS), which r
 
 ## Datasets
 
-The paper includes the release of new datasets containing contrasting pairs of "harmful/benign" statements.
+The paper includes the release of new datasets containing contrasting pairs of "harmful/safe" statements.
 
 ### Dataset Overview
 
@@ -83,6 +83,9 @@ Placeholder and Examples of pairs from data sets.
 **Repo structure:**
 
 ```bash
+
+'Suplementaty materials for the paper.pdf'
+
 code/
   ├── ccs.py
   ├── extract.py
