@@ -183,3 +183,12 @@ This folder contains Jupyter notebooks for running and plotting **Polarity-Aware
 - `transformers`, `torch`, `datasets`, `numpy`, `scikit-learn`, `matplotlib`, `seaborn`, `pandas`, `sentencepiece
 `, `accelerate`, `tqdm`
 - For LLaMA models: use HF-compatible checkpoints (with proper access)
+
+## **Contact**
+
+For questions or collaborations:
+
+- 📧 **Sabrina Sadiekh, email** — sadsobr7@gmail.com
+- 📧 **Ericheva Elena, email** — elena.ericheva01@gmail.com
+- 📧 **Agarwal Chirag, email** — qze3wn@virginia.edu
+- 📧 **Sabrina Sadiekh, telegram** — @sabrina_sadiekh
