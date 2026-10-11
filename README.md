@@ -231,8 +231,6 @@ Small models were run with the same pipeline as `ccs_deberta_pretr.ipynb`; their
 }
 ```
 
-Development history of this project: [SadSabrina/ccs_aisf](https://github.com/SadSabrina/ccs_aisf) (archived).
-
 ## **Contact**
 
 For questions or collaborations:
