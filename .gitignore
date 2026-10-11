@@ -1,0 +1,29 @@
+# OS / editors
+.DS_Store
+.vscode/
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+*_venv/
+
+# Secrets
+.env
+.env.*
+
+# Extracted hidden states and saved probe results
+hidden_states/
+ccs_results/
+steering_cache/
+*.npy
+*.npz
+*.pkl
+*.pt
+*.pth
+
+# Archives
+*.zip

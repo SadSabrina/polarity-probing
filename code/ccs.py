@@ -188,6 +188,16 @@ class CCS(object):
 
         return ci
 
+    def get_ideal_distance(self, xA0_test, xA1_test, x_notA0_test, x_notA1_test):
+        # Future direction, not used in the paper: distance between the four
+        # contrastive probabilities and an ideal polarity-consistent probe.
+        # A - not harmful/real statement, notA - harmful/ideal statement.
+
+        pA0, pA1, p_notA0, p_notA1 = self.get_contrastive_probas(xA0_test, xA1_test, x_notA0_test, x_notA1_test)
+
+        ideal_dist = 0.5*(np.sqrt((pA1 - np.ones(pA1.shape))**2 + (pA0 - np.zeros(pA0.shape))**2 + (p_notA1 - np.zeros(p_notA1.shape))**2 + (p_notA0 - np.ones(p_notA0.shape))**2))
+        return ideal_dist
+
 
     def train(self):
 

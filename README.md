@@ -1,14 +1,17 @@
-# **"Polarity-Aware Probing for Quantifying Latent Alignment in Language Models."**
+# **Polarity-Aware Probing for Quantifying Latent Alignment in Language Models**
 
-Source code for the paper ["Polarity-Aware Probing for Quantifying Latent Alignment in Language Models"]().
+Sabrina Sadiekh\*, Elena Ericheva\*, Chirag Agarwal (\*equal contribution) — AAAI 2026
 
-![img](https://raw.githubusercontent.com/SadSabrina/ccs_2/refs/heads/main/teaser/ccs_teaser.png)
+[Paper (arXiv:2511.21737)](https://arxiv.org/abs/2511.21737) | [🤗 Datasets](https://huggingface.co/collections/SabrinaSadiekh/polarity-aware-probing-datasets-693541679832b1eedd53a928) | [Supplementary materials](docs/supplementary.pdf)
+
+![img](teaser/ccs_teaser.png)
 
 ---
 
 ## **Abstract**
 
-Advances in unsupervised probes like Contrast‑Consistent Search (CCS), which reveal latent beliefs without token outputs, raise the question of **whether they can reliably assess model alignment*. We investigate this by examining CCS's sensitivity to harmful vs. safe statements and introducing Polarity‑Aware CCS (PA‑CCS), which evaluates whether a model's internal representations remain consistent under polarity inversion. We propose two alignment-oriented metrics -- Polar‑Consistency and Contradiction Index -- to quantify the semantic robustness of a model's latent knowledge. To validate PA-CCS, we curate two main and one control datasets containing matched harmful-safe sentence pairs formulated by different methods (concurrent and antagonistic statements), and apply PA-CCS to 16 language models. Our results demonstrate that PA‑CCS reveals both architectural and layer-specific differences in the encoding of latent harmful knowledge. Interestingly, replacing the negation token with a meaningless marker degrades the PA‑CCS scores of models with aligned representations. In contrast, models lacking robust internal calibration do not show this degradation. Our findings highlight the potential of unsupervised probing for alignment evaluation and call on the community to incorporate structural robustness checks into interpretability benchmarks. 
+Advances in unsupervised probes like Contrast‑Consistent Search (CCS), which reveal latent beliefs without token outputs, raise the question of *whether they can reliably assess model alignment*. We investigate this by examining CCS's sensitivity to harmful vs. safe statements and introducing Polarity‑Aware CCS (PA‑CCS), which evaluates whether a model's internal representations remain consistent under polarity inversion. We propose two alignment-oriented metrics -- Polar‑Consistency and Contradiction Index -- to quantify the semantic robustness of a model's latent knowledge. To validate PA-CCS, we curate two main and one control datasets containing matched harmful-safe sentence pairs formulated by different methods (concurrent and antagonistic statements), and apply PA-CCS to 16 language models. Our results demonstrate that PA‑CCS reveals both architectural and layer-specific differences in the encoding of latent harmful knowledge. Interestingly, replacing the negation token with a meaningless marker degrades the PA‑CCS scores of models with aligned representations. In contrast, models lacking robust internal calibration do not show this degradation. Our findings highlight the potential of unsupervised probing for alignment evaluation and call on the community to incorporate structural robustness checks into interpretability benchmarks.
+
 **WARNING:** This paper contains potentially sensitive, harmful, and offensive content.
 
 ---
@@ -19,10 +22,16 @@ The paper includes the release of new datasets containing contrasting pairs of "
 
 ### Dataset Overview
 
-| Dataset | Link | Total Samples | Unique Observations | Harm-Safe Pairs | Purpose |
-|---------|------|--------------|---------------------|-----------------|---------|
-| Mixed dataset | [🤗 Huggingface](https://huggingface.co/datasets/SabrinaSadiekh/mixed_hate_dataset) | 1244 | 1244 | 622 | Tests whether CCS can distinguish harmful from safe beliefs in realistic, naturally varied formulations |
-| Not dataset | [🤗 Huggingface](https://huggingface.co/datasets/SabrinaSadiekh/not_hate_dataset) | 1250 | 1250 | 625 | Direct evaluation of how the model handles polarity flips in tightly aligned sentences |
+| Dataset | Link | Total Samples | Unique Statements | Harm-Safe Pairs | Purpose |
+|---------|------|--------------|-------------------|-----------------|---------|
+| Mixed dataset | [🤗 Huggingface](https://huggingface.co/datasets/SabrinaSadiekh/mixed_hate_dataset) | 1244 | 1219 | 622 | Tests whether CCS can distinguish harmful from safe beliefs in realistic, naturally varied formulations |
+| Not dataset | [🤗 Huggingface](https://huggingface.co/datasets/SabrinaSadiekh/not_hate_dataset) | 1250 | 1241 | 625 | Direct evaluation of how the model handles polarity flips in tightly aligned sentences |
+
+Some statements appear in more than one pair, so the number of unique statements is lower than the number of samples.
+
+Updated 15 pairs (mixed) and 22 pairs (not) on 11.10.2026.
+
+The control *ttt* dataset (and the other random-token controls: `eps`, `moo`, `432`, `////`, `urm`) is built on the fly from the Not dataset by replacing `not` with the placeholder token (see `notebooks/random_tokens/`).
 
 ### Dataset Construction Details
 
@@ -49,7 +58,7 @@ The paper includes the release of new datasets containing contrasting pairs of "
 <td>27.7%</td>
 </tr>
 <tr>
-<td colspan="4"><strong>"Not" Dataset</strong></td>
+<td colspan="3"><strong>"Not" Dataset</strong></td>
 </tr>
 <tr>
 <td>Harmful sentences (625)</td>
@@ -64,6 +73,35 @@ The paper includes the release of new datasets containing contrasting pairs of "
 </tbody>
 </table>
 
+### Data format
+
+From $0, 1, \dots, N-1$ rows, the first $\frac{N}{2}$ are harmful (label `0`) and the next $\frac{N}{2}$ are safe (label `1`); row $i$ is paired with row $i + \frac{N}{2}$. The column `is_harmfull_opposition` holds the label. Files in `data/yes_no/` are the raw statements with the CCS suffix appended (`" Yes."` / `" No."` for Mixed, `"Yes."` / `"No."` for Not).
+
+---
+
+## Models
+
+16 models, grouped as small (<2B) and large (≥2B). Hidden states are taken from the first token (encoders), the last token (decoders), or both (encoder-decoder).
+
+| Group | Model | Layers | Fine-tuned | HF ID |
+|---|---|---|---|---|
+| Encoder-only (small) | DeBERTa Base | 13 | × | `microsoft/deberta-base` |
+| | DeBERTa Large | 25 | × | `microsoft/deberta-large` |
+| | DeBERTa Large | 25 | ✓ | `Elron/deberta-v3-large-hate` |
+| Decoder-only (small) | GPT-2 | 13 | × | `gpt2` |
+| | GPT-2 Large | 37 | × | `gpt2-large` |
+| | GPT-Neo 125M | 13 | ✓ | `ybelkada/gpt-neo-125m-detox` |
+| Encoder-decoder (small) | BERT Base | 12+12 | × | `google-bert/bert-base-uncased` |
+| | BERT Base | 12+12 | ✓ | `ayushdh96/HateSpeech_Bert_Base_Uncased_Fine_Tuned` |
+| | BERT Base | 12+12 | ✓ | `ctoraman/hate-speech-bert` |
+| Decoder-only (large) | Llama 3 8B | 33 | × | `meta-llama/Meta-Llama-3-8B` |
+| | Llama 3 8B Instruct | 33 | ✓ | `meta-llama/Meta-Llama-3-8B-Instruct` |
+| | Llama Guard 2 8B | 33 | ✓ | `meta-llama/Meta-Llama-Guard-2-8B` |
+| | Gemma 2 2B | 27 | × | `google/gemma-2-2b` |
+| | Gemma 2 2B IT | 27 | ✓ | `google/gemma-2-2b-it` |
+| | Gemma 2 9B | 43 | × | `google/gemma-2-9b` |
+| | Gemma 2 9B IT | 43 | ✓ | `google/gemma-2-9b-it` |
+
 ---
 
 ## **How to use this repository?**
@@ -73,41 +111,50 @@ The primary goal of this repository is to ensure the reproducibility of the resu
 1. Explore the behavior of metrics on your own models and analyze internal polarity compared to the model output.
 2. Use datasets balanced by categories and utterance types in your experiments. Datasets are available for download in the HF ([mixed dataset](https://huggingface.co/datasets/SabrinaSadiekh/mixed_hate_dataset), [not dataset](https://huggingface.co/datasets/SabrinaSadiekh/not_hate_dataset)).
 3. Use visualizations in presentations and lectures on the geometric organization of data within a model.
-4. Explore the file `Supplementaty materials for the paper` to find details about Related works, List of Models Used in Experiments, Performance Metrics by Model Architecture, Separation Analysis, Robustness of Results on Meaningless
-Placeholder and Examples of pairs from data sets.
----
+4. Explore [`docs/supplementary.pdf`](docs/supplementary.pdf) for details about related works, the list of models, performance metrics by model architecture, separation analysis, robustness of results on meaningless placeholders, and examples of pairs from the datasets.
+
+### Where to find each figure
+
+| Paper figure | Source |
+|---|---|
+| Fig. 1E (PC–CI regions) | `notebooks/analysis/trade_off_plots.ipynb`, `results/figures/teaser.pdf` |
+| Figs. 2–5 (aggregated metrics, encoder vs decoder, PC–CI trade-off, fine-tuning) | per-layer metrics in `results/metrics/*.csv`; Fig. 5 in `results/figures/fine_tuning.pdf` |
+| Fig. 6 (metrics by architecture) | `results/figures/metrics/` |
+| Figs. 7–8 (separation analysis) | `results/figures/separation/` |
+| Figs. 9–10 (random-token robustness) | `notebooks/random_tokens/` |
+
 ---
 
 ## **Files and folders**
 
-**Repo structure:**
-
 ```bash
-
-'Suplementaty materials for the paper.pdf'
-
 code/
   ├── ccs.py
   ├── extract.py
   ├── extract_llama.py
-  ├── format_results.py
+  └── format_results.py
 
 data/
   ├── raw/
   │   ├── mixed_dataset.csv
-  │   └── not_dataset.csv
-  ├── yes_no/
-  │   ├── mixed_dataset_no.csv
-  │   ├── mixed_dataset_yes.csv
-  │   ├── not_dataset_no.csv
-  │   └── not_dataset_yes.csv
+  │   └── not_hate_dataset.csv
+  └── yes_no/
+      ├── mixed_dataset_no.csv
+      ├── mixed_dataset_yes.csv
+      ├── not_dataset_no.csv
+      └── not_dataset_yes.csv
 
 notebooks/
-  ├── ccs_deberta_pretr.ipynb
-  ├── ccs_Meta-Llama-3-8B-Instruct.ipynb
-  └── ...
-  
+  ├── main/            # PA-CCS on DeBERTa-large-FT, Llama 3 8B (base, instruct, guard), Gemma 2 (2B, 9B, base, it)
+  ├── random_tokens/   # random-token controls: BERT-base-FT (encoder, decoder), DeBERTa-large-FT, GPT-2
+  └── analysis/        # PC–CI region plot
 
+results/
+  ├── metrics/         # per-layer ESA / PC / CI for all models and datasets (mixed, not, ttt)
+  └── figures/
+
+docs/
+  └── supplementary.pdf
 ```
 
 ### **Description**
@@ -121,8 +168,6 @@ The code is organized to cleanly separate:
 - Feature extraction (`extract.py`, `extract_llama.py`)
 - Probing & analysis (`ccs.py`)
 - Evaluation & reporting (`format_results.py`)
-
-##### Files
 
 ##### `ccs.py`
 
@@ -149,46 +194,50 @@ Post-processing utility that:
 
 ##### Usage Notes
 
-- All scripts assume that the input data is already formatted as sentence pairs with polarity labels.
-- The dataset with pairs should be organized as follows. From $0, 1, 2 .... N$ sentences, the first $\frac{N}{2}$ harm (or safe) and the next $\frac{N}{2}$ safe (or harm). For 0, the pair index is $\frac{N}{2}$, for 1, the pair index is $\frac{N}{2} + 1$ and so on.
+- All scripts assume that the input data is already formatted as sentence pairs with polarity labels (see [Data format](#data-format)).
 - The model interface is built on top of HuggingFace converters.
+- Notebooks add `code/` to the Python path relative to their own folder, so run them from `notebooks/<subfolder>/`.
 
-#### **`notebooks/` — PA-CCS Evaluation Notebooks**
+#### `notebooks/` — PA-CCS Evaluation Notebooks
 
-This folder contains Jupyter notebooks for running and plotting **Polarity-Aware CCS (PA-CCS)** on various language models. The notebooks are intended to reproduce key experiments and visualize model alignment behavior.
-
-##### Files
-
-- **`ccs_deberta_pretr.ipynb`**
-  Runs CCS and PA-CCS on **DeBERTa-large-FT** (`Elron/deberta-v3-large-hate`). Includes:
+Each notebook in `notebooks/main/` runs the full pipeline for one model:
 
 - Extract hidden representations
-- PA-CCC training
+- PA-CCS training
 - Calculate and format ESA/PC/CI metrics
 - Visual diagnostics of metrics and separations
 
-- **`ccs_Meta-Llama-3-8B-Instruct.ipynb`**
-  Applies PA-CCS to **Meta-LLaMA-3 8B Instruct** using reformulated harmful-safe statement pairs. Includes:
-
-- Extract hidden representations
-- PA-CCC training
-- Calculate and format ESA/PC/CI metrics
-- Visual diagnostics of metrics and separations
-
-#### **`data/` — datasets introduced in paper**
+Small models were run with the same pipeline as `ccs_deberta_pretr.ipynb`; their per-layer results are in `results/metrics/all_small_models.csv`.
 
 #### Requirements
 
 - Python ≥ 3.9
-- `transformers`, `torch`, `datasets`, `numpy`, `scikit-learn`, `matplotlib`, `seaborn`, `pandas`, `sentencepiece
-`, `accelerate`, `tqdm`
-- For LLaMA models: use HF-compatible checkpoints (with proper access)
+- `transformers`, `torch`, `datasets`, `numpy`, `scikit-learn`, `matplotlib`, `seaborn`, `pandas`, `sentencepiece`, `accelerate`, `tqdm`
+- For LLaMA and Gemma models: use HF-compatible checkpoints (with proper access)
+
+---
+
+## Citation
+
+```bibtex
+@misc{sadiekh2025polarityaware,
+  title={Polarity-Aware Probing for Quantifying Latent Alignment in Language Models},
+  author={Sadiekh, Sabrina and Ericheva, Elena and Agarwal, Chirag},
+  year={2025},
+  eprint={2511.21737},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2511.21737}
+}
+```
+
+Development history of this project: [SadSabrina/ccs_aisf](https://github.com/SadSabrina/ccs_aisf) (archived).
 
 ## **Contact**
 
 For questions or collaborations:
 
 - 📧 **Sabrina Sadiekh, email** — sadsobr7@gmail.com
-- 📧 **Ericheva Elena, email** — elena.ericheva01@gmail.com
-- 📧 **Agarwal Chirag, email** — qze3wn@virginia.edu
+- 📧 **Ericheva Elena, email** — elena.ericheva01@gmail.com
+- 📧 **Agarwal Chirag, email** — qze3wn@virginia.edu
 - 📧 **Sabrina Sadiekh, telegram** — @sabrina_sadiekh
